@@ -1,0 +1,52 @@
+USE quan_ly_ban_hang;
+SELECT * FROM quan_ly_ban_hang.orders;
+
+-- lấy ra danh sách đơn hàng id, ten_khach_hang, created, trang_thai, totail
+-- xuân sơn 
+select o.id,c.name,o.created,o.status,SUM(od.quantity * od.price) as totail
+FROM orders o
+JOIN customer c 
+ON o.customer_id = c.id
+JOIN order_detail od
+ON od.orders_id  = o.id
+GROUP BY o.id,c.name,o.created,o.status;
+
+SELECT * FROM product LIMIT 3; 
+
+-- phân trang 6 sản phẩm hiển thị 2 sản phẩm / 1 trang
+-- trang 1 :
+SELECT * FROM product LIMIT 2 OFFSET 0;
+-- trang 2: 
+SELECT * FROM product LIMIT 2 OFFSET 2;
+-- trang 3: 
+SELECT * FROM product LIMIT 2 OFFSET 4;
+
+-- hàm abs 
+SELECT abs(-5);
+
+SELECT ROUND(1.6);
+
+SELECT ceil(7.2);
+
+SELECT concat("NGuyen"," ","Vane");
+
+-- hàm GROUP_CONCAT(field SEPARATOR ",")
+SELECT group_concat(name separator "-") FROM category;
+
+SELECT c.id,c.name,GROUP_CONCAT(p.name SEPARATOR "_") AS pro_name
+FROM category c
+JOIN product p 
+ON c.id = p.category_id
+GROUP BY c.id;
+
+SELECT format(10000,0);
+
+SELECT lcase("ABC");
+
+SELECT date_format(current_date,"%d-%m-%Y");
+
+SELECT datediff(current_date,'2022-11-16');
+
+SELECT DATEDIFF("2017-06-25", "2017-06-15");
+
+SELECT id,name, if(status=1,'a','false') as status FROM category;
