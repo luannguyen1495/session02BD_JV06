@@ -1,0 +1,90 @@
+USE quan_ly_ban_hang;
+
+SELECT * FROM product;
+
+CREATE table test(
+	id int not null,
+    name varchar(255) not null
+);
+
+delete from test;
+INSERT INTO test(id,name) VALUES (2,'b');
+INSERT INTO test(id,name) VALUES (1,'a');
+INSERT INTO test(id,name) VALUES (1,'a');
+SELECT * FROM test;
+CREATE index idx_id ON test(id);
+
+CREATE table test_2(
+	id int not null,
+    name varchar(255) not null
+);
+-- tao chi muc unique
+CREATE unique index uidx_id ON test_2(id);
+INSERT INTO test_2(id,name) VALUES (2,'b');
+INSERT INTO test_2(id,name) VALUES (1,'a');
+INSERT INTO test_2(id,name) VALUES (1,'a');
+
+SELECT * FROM test_2;
+
+-- 
+SELECT p.id,p.name,p.price as pro_price, c.name as category_name
+FROM product p
+JOIN category c
+ON p.category_id = c.id;
+
+-- Tao view 
+CREATE VIEW vw_get_product_far_cate
+AS
+SELECT p.id,p.name,p.price as pro_price, c.name as category_name
+FROM product p
+JOIN category c
+ON p.category_id = c.id;
+
+-- Cap nhat view 
+alter view vw_get_product_far_cate
+AS
+SELECT p.id,p.name,p.price as pro_price, c.name as category_name
+FROM product p
+JOIN category c
+ON p.category_id = c.id where p.price > 10000000;
+
+SELECT * FROM vw_get_product_far_cate;
+
+
+-- xay dung thu tuc hien thi danh sach san pham 
+
+delimiter // 
+create procedure proc_show_list_product()
+begin
+select * from product;
+end;
+//
+-- goi thu tuc 
+call proc_show_list_product;
+-- thu tuc co tham so dau vao 
+INSERT INTO category(name,status) VALUES ("acx",1);
+delimiter // 
+create procedure proc_insert_category(IN category_name varchar(50), status bit(1))
+begin
+	INSERT INTO category(name,status) VALUES (category_name,status);
+end;
+//
+
+-- goi thu tuc 
+call proc_insert_category('cate',1);
+
+SELECT * FROM category;
+
+-- laay ve tong tien cua don hang co id = 1
+SELECT SUM(price*quantity) FROM order_detail WHERE orders_id = 1;
+
+-- tao thu tuc co tham so dau vao la id don hang tra ve tongtien 
+
+delimiter // 
+create procedure proc_get_totail_by_id(IN id int,OUT total float)
+begin
+	SET total = (SELECT SUM(price*quantity) FROM order_detail WHERE orders_id = id);
+end;
+//
+call proc_get_totail_by_id(1,@total);
+SELECT @total as total;
